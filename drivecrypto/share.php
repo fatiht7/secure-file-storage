@@ -1,0 +1,160 @@
+<?php
+require_once 'includes/auth.php';
+require_once 'config/database.php';
+require_once 'includes/crypto.php';
+require_auth();
+
+$error = '';
+$success = '';
+
+$id_fichier = intval($_GET['id'] ?? $_POST['id_fichier'] ?? 0);
+
+// Vérifier que le fichier appartient à l'utilisateur connecté
+$stmt = $pdo->prepare('
+    SELECT f.id_fichier, f.nom_original_chiffre, p.cle_aes_chiffree
+    FROM fichiers f
+    JOIN partager p ON p.id_fichier = f.id_fichier AND p.id_utilisateur = :uid
+    WHERE f.id_fichier = :fid AND f.id_utilisateur = :uid
+');
+$stmt->execute(['fid' => $id_fichier, 'uid' => $_SESSION['user_id']]);
+$fichier = $stmt->fetch();
+
+if (!$fichier) {
+    die('Fichier introuvable ou vous n\'en êtes pas le propriétaire.');
+}
+
+// Déchiffrer le nom pour l'affichage
+$stmt_key = $pdo->prepare('SELECT cle_privee_chiffree FROM utilisateurs WHERE id_utilisateur = :id');
+$stmt_key->execute(['id' => $_SESSION['user_id']]);
+$cle_privee = dechiffrer_cle_privee($stmt_key->fetchColumn(), $_SESSION['mdp_clair']);
+$cle_aes_share = dechiffrer_rsa($fichier['cle_aes_chiffree'], $cle_privee);
+$nom_affiche = dechiffrer_texte_aes($fichier['nom_original_chiffre'], $cle_aes_share);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_valid_csrf_token();
+
+    $destinataire_username = trim($_POST['destinataire'] ?? '');
+
+    if (empty($destinataire_username)) {
+        $error = 'Veuillez entrer un nom d\'utilisateur.';
+    } elseif ($destinataire_username === $_SESSION['username']) {
+        $error = 'Vous ne pouvez pas partager un fichier avec vous-même.';
+    } else {
+        // 1. Trouver le destinataire et sa clé publique
+        $stmt = $pdo->prepare('SELECT id_utilisateur, cle_publique FROM utilisateurs WHERE username = :u');
+        $stmt->execute(['u' => $destinataire_username]);
+        $destinataire = $stmt->fetch();
+
+        if (!$destinataire) {
+            $error = 'Utilisateur introuvable.';
+        } else {
+            // Vérifier que le partage n'existe pas déjà
+            $stmt = $pdo->prepare('SELECT 1 FROM partager WHERE id_fichier = :fid AND id_utilisateur = :uid');
+            $stmt->execute(['fid' => $id_fichier, 'uid' => $destinataire['id_utilisateur']]);
+
+            if ($stmt->fetch()) {
+                $error = 'Ce fichier est déjà partagé avec cet utilisateur.';
+            } else {
+                try {
+                    // 2. Récupérer la clé AES chiffrée du propriétaire
+                    $stmt = $pdo->prepare('SELECT cle_aes_chiffree FROM partager WHERE id_fichier = :fid AND id_utilisateur = :uid');
+                    $stmt->execute(['fid' => $id_fichier, 'uid' => $_SESSION['user_id']]);
+                    $cle_aes_chiffree_proprio = $stmt->fetchColumn();
+
+                    // 3. Déchiffrer la clé privée RSA du propriétaire
+                    $stmt = $pdo->prepare('SELECT cle_privee_chiffree FROM utilisateurs WHERE id_utilisateur = :id');
+                    $stmt->execute(['id' => $_SESSION['user_id']]);
+                    $cle_privee_chiffree = $stmt->fetchColumn();
+
+                    $cle_privee = dechiffrer_cle_privee($cle_privee_chiffree, $_SESSION['mdp_clair']);
+
+                    // 4. Déchiffrer la clé AES
+                    $cle_aes = dechiffrer_rsa($cle_aes_chiffree_proprio, $cle_privee);
+
+                    // 5. Re-chiffrer la clé AES avec la clé publique du destinataire
+                    $cle_aes_pour_dest = chiffrer_rsa($cle_aes, $destinataire['cle_publique']);
+
+                    // 6. Insérer le partage
+                    $stmt = $pdo->prepare('
+                        INSERT INTO partager (id_utilisateur, id_fichier, cle_aes_chiffree)
+                        VALUES (:uid, :fid, :cle)
+                    ');
+                    $stmt->execute([
+                        'uid' => $destinataire['id_utilisateur'],
+                        'fid' => $id_fichier,
+                        'cle' => $cle_aes_pour_dest,
+                    ]);
+
+                    $success = 'Fichier partagé avec ' . htmlspecialchars($destinataire_username) . ' !';
+
+                } catch (Exception $e) {
+                    $error = 'Erreur : ' . $e->getMessage();
+                }
+            }
+        }
+    }
+}
+
+// Liste des utilisateurs avec qui le fichier est déjà partagé
+$stmt = $pdo->prepare('
+    SELECT u.username, p.date_partage
+    FROM partager p
+    JOIN utilisateurs u ON u.id_utilisateur = p.id_utilisateur
+    WHERE p.id_fichier = :fid AND p.id_utilisateur != :uid
+    ORDER BY p.date_partage DESC
+');
+$stmt->execute(['fid' => $id_fichier, 'uid' => $_SESSION['user_id']]);
+$partages = $stmt->fetchAll();
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partager - Stockage Sécurisé</title>
+    <link rel="stylesheet" href="public/css/style.css">
+</head>
+<body class="auth-page">
+    <div class="container">
+        <h1>Partager un fichier</h1>
+        <p>Fichier : <strong><?= htmlspecialchars($nom_affiche) ?></strong></p>
+
+        <?php if ($error): ?>
+            <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+        <?php if ($success): ?>
+            <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
+        <?php endif; ?>
+
+        <form method="POST" action="share.php">
+            <?= csrf_field() ?>
+            <input type="hidden" name="id_fichier" value="<?= $id_fichier ?>">
+            <div class="form-group">
+                <label for="destinataire">Nom d'utilisateur du destinataire</label>
+                <input type="text" id="destinataire" name="destinataire" required
+                       placeholder="Ex: alice">
+            </div>
+            <button type="submit" class="btn">Partager</button>
+        </form>
+
+        <?php if (!empty($partages)): ?>
+            <h2>Déjà partagé avec</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>Utilisateur</th><th>Date</th></tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($partages as $p): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($p['username']) ?></td>
+                            <td><?= htmlspecialchars($p['date_partage']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <p class="link"><a href="dashboard.php">Retour</a></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Runtime data
+drivecrypto/uploads/*
+!drivecrypto/uploads/.gitkeep
+drivecrypto/style-preview.html
+*.log
+
+# Editor and operating system files
+.git-old/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Test and tooling caches
+.phpunit.result.cache
+.php-cs-fixer.cache
+coverage/
