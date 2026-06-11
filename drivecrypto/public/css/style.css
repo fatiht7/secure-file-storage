@@ -131,6 +131,51 @@ form {
     cursor: pointer;
 }
 
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 4px 0 16px;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+.checkbox-group input {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 auto;
+    margin-top: 2px;
+    accent-color: var(--primary);
+}
+
+.checkbox-group label {
+    font-weight: 500;
+}
+
+.checkbox-group a,
+.legal-links a,
+.legal-container a {
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.checkbox-group a:hover,
+.legal-links a:hover,
+.legal-container a:hover {
+    text-decoration: underline;
+}
+
+.form-notice {
+    padding: 11px 13px;
+    margin-bottom: 18px;
+    color: #76570a;
+    background: #fff8df;
+    border: 1px solid #eadca8;
+    border-radius: 9px;
+    font-size: 0.8rem;
+}
+
 .form-group input:focus {
     outline: none;
     background: var(--surface);
@@ -245,6 +290,59 @@ form > .btn {
 
 .link a:hover {
     text-decoration: underline;
+}
+
+.legal-links {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+.legal-page {
+    padding: 32px 20px;
+}
+
+.legal-container {
+    max-width: 840px;
+    margin: 0 auto;
+}
+
+.legal-container h1 {
+    margin-bottom: 6px;
+}
+
+.legal-container section {
+    margin-top: 28px;
+}
+
+.legal-container h2 {
+    margin-bottom: 8px;
+}
+
+.legal-container ul {
+    padding-left: 22px;
+    color: var(--text-muted);
+}
+
+.legal-container li + li {
+    margin-top: 6px;
+}
+
+.legal-meta {
+    font-size: 0.84rem;
+}
+
+.legal-notice {
+    padding: 14px 16px;
+    margin-top: 22px;
+    color: #76570a;
+    background: #fff8df;
+    border: 1px solid #eadca8;
+    border-radius: 10px;
+    font-size: 0.88rem;
 }
 
 .header {

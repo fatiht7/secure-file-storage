@@ -18,10 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $mdp = $_POST['mot_de_passe'] ?? '';
     $confirm = $_POST['mot_de_passe_confirmation'] ?? '';
+    $terms_accepted = isset($_POST['terms_accepted']);
 
     // Validations
     if (empty($username) || empty($email) || empty($mdp)) {
         $error = 'Tous les champs sont obligatoires.';
+    } elseif (!$terms_accepted) {
+        $error = 'Vous devez accepter les conditions d\'utilisation.';
     } elseif (strlen($mdp) < 8) {
         $error = 'Le mot de passe doit contenir au moins 8 caractères.';
     } elseif ($mdp !== $confirm) {
@@ -116,10 +119,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" id="mot_de_passe_confirmation" name="mot_de_passe_confirmation" required>
             </div>
 
+            <div class="checkbox-group">
+                <input type="checkbox" id="terms_accepted" name="terms_accepted" value="1" required
+                       <?= !empty($terms_accepted) ? 'checked' : '' ?>>
+                <label for="terms_accepted">
+                    J'accepte les <a href="terms.php" target="_blank" rel="noopener">conditions d'utilisation</a>
+                    et j'ai lu la <a href="privacy.php" target="_blank" rel="noopener">politique de confidentialité</a>.
+                </label>
+            </div>
+
+            <p class="form-notice">
+                Prototype étudiant : n'envoyez aucune donnée sensible ou confidentielle.
+            </p>
+
             <button type="submit" class="btn">S'inscrire</button>
         </form>
 
         <p class="link">Déjà un compte ? <a href="login.php">Se connecter</a></p>
+        <p class="legal-links">
+            <a href="privacy.php">Confidentialité</a>
+            <span aria-hidden="true">·</span>
+            <a href="terms.php">Conditions d'utilisation</a>
+        </p>
     </div>
 </body>
 </html>

@@ -176,6 +176,12 @@ function format_taille(int $octets): string {
                 </table>
             <?php endif; ?>
         </div>
+
+        <p class="legal-links">
+            <a href="privacy.php">Confidentialité</a>
+            <span aria-hidden="true">·</span>
+            <a href="terms.php">Conditions d'utilisation</a>
+        </p>
     </div>
 </body>
 </html>

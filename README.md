@@ -19,6 +19,7 @@ The repository contains:
 - file and account deletion;
 - CSRF protection for forms;
 - transactional uploads with rollback on failure.
+- privacy policy and terms of use for the public demonstration.
 
 ## Requirements
 

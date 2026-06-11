@@ -70,6 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <p class="link">Pas de compte ? <a href="register.php">S'inscrire</a></p>
+        <p class="legal-links">
+            <a href="privacy.php">Confidentialité</a>
+            <span aria-hidden="true">·</span>
+            <a href="terms.php">Conditions d'utilisation</a>
+        </p>
     </div>
 </body>
 </html>
