@@ -1,13 +1,36 @@
 <?php
 
-$host = getenv('DB_HOST') ?: 'localhost';
-$port = getenv('DB_PORT') ?: '5432';
-$dbname = getenv('DB_NAME') ?: 'drivecrypto';
-$user = getenv('DB_USER') ?: 'postgres';
-$password = getenv('DB_PASSWORD');
+$env = [];
+$env_file = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . '.env';
 
-if ($password === false) {
-    die('La variable d\'environnement DB_PASSWORD est obligatoire.');
+if (is_file($env_file)) {
+    $env = parse_ini_file($env_file, false, INI_SCANNER_RAW);
+
+    if ($env === false) {
+        die('Unable to read the .env configuration file.');
+    }
+}
+
+function config_value(string $name, ?string $default = null): ?string
+{
+    global $env;
+
+    $value = getenv($name);
+    if ($value !== false && $value !== '') {
+        return $value;
+    }
+
+    return isset($env[$name]) && $env[$name] !== '' ? $env[$name] : $default;
+}
+
+$host = config_value('DB_HOST', 'localhost');
+$port = config_value('DB_PORT', '5432');
+$dbname = config_value('DB_NAME', 'drivecrypto');
+$user = config_value('DB_USER', 'postgres');
+$password = config_value('DB_PASSWORD');
+
+if ($password === null) {
+    die('DB_PASSWORD must be configured in the environment or in the .env file.');
 }
 
 try {

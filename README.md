@@ -31,8 +31,7 @@ The repository contains:
 1. Create an empty PostgreSQL database.
 2. Run [`Scriptbdd/bdd.sql`](Scriptbdd/bdd.sql).
 3. Copy `.env.example` to `.env` and update the values.
-4. Export the variables from `.env` to the PHP server environment.
-5. Start the application from the `drivecrypto` directory.
+4. Start the application from the `drivecrypto` directory.
 
 PowerShell example:
 
