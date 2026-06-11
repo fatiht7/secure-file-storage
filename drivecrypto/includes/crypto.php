@@ -1,5 +1,12 @@
 <?php
 
+function crypto_error(string $french, string $english): string
+{
+    return function_exists('current_language') && current_language() === 'en'
+        ? $english
+        : $french;
+}
+
 /**
  * Fonctions de cryptographie pour le projet
  * - Hachage des mots de passe : Argon2id
@@ -35,7 +42,10 @@ function generer_paire_cles_rsa()
     $paire = openssl_pkey_new($config);
 
     if ($paire === false) {
-        throw new Exception('Erreur lors de la génération RSA : ' . openssl_error_string());
+        throw new Exception(
+            crypto_error('Erreur lors de la génération RSA : ', 'RSA key generation error: ')
+            . openssl_error_string()
+        );
     }
 
     // On extrait la clé privée en clair (temporairement)
@@ -75,7 +85,10 @@ function chiffrer_cle_privee($cle_privee_pem, $mdp)
     );
 
     if ($texte_chiffre === false) {
-        throw new Exception('Impossible de chiffrer la clé privée.');
+        throw new Exception(crypto_error(
+            'Impossible de chiffrer la clé privée.',
+            'Unable to encrypt the private key.'
+        ));
     }
 
     // On colle tout ensemble (Sel + IV + Tag + Message chiffré) et on encode pour la base de données
@@ -105,7 +118,10 @@ function dechiffrer_cle_privee($donnee_base64, $mdp)
     );
 
     if ($cle_privee === false) {
-        throw new Exception('Mot de passe incorrect ou clé corrompue.');
+        throw new Exception(crypto_error(
+            'Mot de passe incorrect ou clé corrompue.',
+            'Incorrect password or corrupted key.'
+        ));
     }
 
     return $cle_privee;
@@ -124,7 +140,7 @@ function chiffrer_rsa($donnees, $cle_publique_pem)
     );
 
     if (!$success) {
-        throw new Exception('Erreur lors du chiffrement RSA.');
+        throw new Exception(crypto_error('Erreur lors du chiffrement RSA.', 'RSA encryption error.'));
     }
 
     return base64_encode($chiffre);
@@ -142,7 +158,7 @@ function dechiffrer_rsa($donnee_base64, $cle_privee_pem)
     );
 
     if (!$success) {
-        throw new Exception('Erreur lors du déchiffrement RSA.');
+        throw new Exception(crypto_error('Erreur lors du déchiffrement RSA.', 'RSA decryption error.'));
     }
 
     return $dechiffre;
@@ -167,7 +183,10 @@ function chiffrer_texte_aes($texte, $cle_aes)
     );
 
     if ($texte_chiffre === false) {
-        throw new Exception('Erreur de chiffrement AES sur le texte.');
+        throw new Exception(crypto_error(
+            'Erreur de chiffrement AES sur le texte.',
+            'AES text encryption error.'
+        ));
     }
 
     return base64_encode($iv . $tag . $texte_chiffre);
@@ -191,7 +210,10 @@ function dechiffrer_texte_aes($donnee_base64, $cle_aes)
     );
 
     if ($texte === false) {
-        throw new Exception('Erreur de déchiffrement AES sur le texte.');
+        throw new Exception(crypto_error(
+            'Erreur de déchiffrement AES sur le texte.',
+            'AES text decryption error.'
+        ));
     }
 
     return $texte;
@@ -221,7 +243,7 @@ function chiffrer_fichier_aes($donnees, $cle_aes)
     );
 
     if ($texte_chiffre === false) {
-        throw new Exception('Erreur de chiffrement sur le fichier.');
+        throw new Exception(crypto_error('Erreur de chiffrement sur le fichier.', 'File encryption error.'));
     }
 
     // On renvoie les données chiffrées + l'empreinte pour vérifier l'intégrité plus tard
@@ -247,7 +269,7 @@ function dechiffrer_fichier_aes($donnees_brutes, $cle_aes)
     );
 
     if ($donnees === false) {
-        throw new Exception('Fichier corrompu ou clé invalide.');
+        throw new Exception(crypto_error('Fichier corrompu ou clé invalide.', 'Corrupted file or invalid key.'));
     }
 
     return $donnees;

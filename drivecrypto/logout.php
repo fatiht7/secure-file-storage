@@ -3,7 +3,7 @@ require_once 'includes/auth.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    exit('Méthode non autorisée.');
+    exit(translate('method_not_allowed'));
 }
 
 require_valid_csrf_token();

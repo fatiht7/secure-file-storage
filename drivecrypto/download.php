@@ -7,7 +7,7 @@ require_auth();
 $id_fichier = intval($_GET['id'] ?? 0);
 
 if ($id_fichier <= 0) {
-    die('Fichier invalide.');
+    die(translate('invalid_file'));
 }
 
 // 1. Vérifier que l'utilisateur a accès au fichier (propriétaire ou partage)
@@ -21,7 +21,7 @@ $stmt->execute(['fid' => $id_fichier, 'uid' => $_SESSION['user_id']]);
 $fichier = $stmt->fetch();
 
 if (!$fichier) {
-    die('Accès refusé ou fichier introuvable.');
+    die(translate('file_not_found'));
 }
 
 try {
@@ -46,7 +46,7 @@ try {
 
     // 6. Vérifier l'intégrité (SHA-256)
     if (hash('sha256', $contenu) !== $fichier['hash_sha256']) {
-        die('Erreur d\'intégrité : le fichier a été modifié !');
+        die(translate('integrity_error'));
     }
 
     // 7. Envoyer le fichier au navigateur
@@ -57,5 +57,5 @@ try {
     exit;
 
 } catch (Exception $e) {
-    die('Erreur de déchiffrement : ' . $e->getMessage());
+    die(translate('decryption_error', $e->getMessage()));
 }

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mdp = $_POST['mot_de_passe'] ?? '';
 
     if (empty($username) || empty($mdp)) {
-        $error = 'Tous les champs sont obligatoires.';
+        $error = translate('all_fields_required');
     } else {
         $stmt = $pdo->prepare('SELECT id_utilisateur, username, mot_de_passe_hash FROM utilisateurs WHERE username = :u');
         $stmt->execute(['u' => $username]);
@@ -32,22 +32,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: dashboard.php');
             exit;
         } else {
-            $error = 'Identifiants incorrects.';
+            $error = translate('invalid_credentials');
         }
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= current_language() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Stockage Sécurisé</title>
+    <title><?= translate('login') ?> - <?= translate('app_name') ?></title>
     <link rel="stylesheet" href="public/css/style.css">
 </head>
 <body class="auth-page">
     <div class="container">
-        <h1>Connexion</h1>
+        <?= language_switcher() ?>
+        <h1><?= translate('login') ?></h1>
 
         <?php if ($error): ?>
             <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
@@ -56,24 +57,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="POST" action="login.php">
             <?= csrf_field() ?>
             <div class="form-group">
-                <label for="username">Nom d'utilisateur</label>
+                <label for="username"><?= translate('username') ?></label>
                 <input type="text" id="username" name="username" required
                        value="<?= htmlspecialchars($username ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label for="mot_de_passe">Mot de passe</label>
+                <label for="mot_de_passe"><?= translate('password') ?></label>
                 <input type="password" id="mot_de_passe" name="mot_de_passe" required>
             </div>
 
-            <button type="submit" class="btn">Se connecter</button>
+            <button type="submit" class="btn"><?= translate('sign_in') ?></button>
         </form>
 
-        <p class="link">Pas de compte ? <a href="register.php">S'inscrire</a></p>
+        <p class="link"><?= translate('no_account') ?> <a href="register.php"><?= translate('sign_up') ?></a></p>
         <p class="legal-links">
-            <a href="privacy.php">Confidentialité</a>
+            <a href="privacy.php"><?= translate('privacy') ?></a>
             <span aria-hidden="true">·</span>
-            <a href="terms.php">Conditions d'utilisation</a>
+            <a href="terms.php"><?= translate('terms') ?></a>
         </p>
     </div>
 </body>

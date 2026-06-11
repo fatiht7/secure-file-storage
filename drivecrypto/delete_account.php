@@ -38,22 +38,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: login.php');
         exit;
     } else {
-        $error = 'Mot de passe incorrect.';
+        $error = translate('wrong_password');
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= current_language() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supprimer mon compte - Stockage Sécurisé</title>
+    <title><?= translate('delete_my_account') ?> - <?= translate('app_name') ?></title>
     <link rel="stylesheet" href="public/css/style.css">
 </head>
 <body class="auth-page">
     <div class="container">
-        <h1>Supprimer mon compte</h1>
-        <p class="warning">Cette action est irréversible. Tous vos fichiers seront supprimés.</p>
+        <?= language_switcher() ?>
+        <h1><?= translate('delete_my_account') ?></h1>
+        <p class="warning"><?= translate('delete_warning') ?></p>
 
         <?php if ($error): ?>
             <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
@@ -62,13 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="POST" action="delete_account.php">
             <?= csrf_field() ?>
             <div class="form-group">
-                <label for="mot_de_passe">Confirmez votre mot de passe</label>
+                <label for="mot_de_passe"><?= translate('confirm_your_password') ?></label>
                 <input type="password" id="mot_de_passe" name="mot_de_passe" required>
             </div>
-            <button type="submit" class="btn btn-danger">Supprimer définitivement</button>
+            <button type="submit" class="btn btn-danger"><?= translate('delete_permanently') ?></button>
         </form>
 
-        <p class="link"><a href="dashboard.php">Retour</a></p>
+        <p class="link"><a href="dashboard.php"><?= translate('back') ?></a></p>
     </div>
 </body>
 </html>

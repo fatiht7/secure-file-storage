@@ -20,7 +20,7 @@ $stmt->execute(['fid' => $id_fichier, 'uid' => $_SESSION['user_id']]);
 $fichier = $stmt->fetch();
 
 if (!$fichier) {
-    die('Fichier introuvable ou vous n\'en êtes pas le propriétaire.');
+    die(translate('owner_file_not_found'));
 }
 
 // Déchiffrer le nom pour l'affichage
@@ -36,9 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $destinataire_username = trim($_POST['destinataire'] ?? '');
 
     if (empty($destinataire_username)) {
-        $error = 'Veuillez entrer un nom d\'utilisateur.';
+        $error = translate('recipient_required');
     } elseif ($destinataire_username === $_SESSION['username']) {
-        $error = 'Vous ne pouvez pas partager un fichier avec vous-même.';
+        $error = translate('cannot_share_self');
     } else {
         // 1. Trouver le destinataire et sa clé publique
         $stmt = $pdo->prepare('SELECT id_utilisateur, cle_publique FROM utilisateurs WHERE username = :u');
@@ -46,14 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $destinataire = $stmt->fetch();
 
         if (!$destinataire) {
-            $error = 'Utilisateur introuvable.';
+            $error = translate('user_not_found');
         } else {
             // Vérifier que le partage n'existe pas déjà
             $stmt = $pdo->prepare('SELECT 1 FROM partager WHERE id_fichier = :fid AND id_utilisateur = :uid');
             $stmt->execute(['fid' => $id_fichier, 'uid' => $destinataire['id_utilisateur']]);
 
             if ($stmt->fetch()) {
-                $error = 'Ce fichier est déjà partagé avec cet utilisateur.';
+                $error = translate('already_shared');
             } else {
                 try {
                     // 2. Récupérer la clé AES chiffrée du propriétaire
@@ -85,10 +85,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'cle' => $cle_aes_pour_dest,
                     ]);
 
-                    $success = 'Fichier partagé avec ' . htmlspecialchars($destinataire_username) . ' !';
+                    $success = translate('shared_success', $destinataire_username);
 
                 } catch (Exception $e) {
-                    $error = 'Erreur : ' . $e->getMessage();
+                    $error = translate('generic_error', $e->getMessage());
                 }
             }
         }
@@ -107,17 +107,18 @@ $stmt->execute(['fid' => $id_fichier, 'uid' => $_SESSION['user_id']]);
 $partages = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= current_language() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partager - Stockage Sécurisé</title>
+    <title><?= translate('share') ?> - <?= translate('app_name') ?></title>
     <link rel="stylesheet" href="public/css/style.css">
 </head>
 <body class="auth-page">
     <div class="container">
-        <h1>Partager un fichier</h1>
-        <p>Fichier : <strong><?= htmlspecialchars($nom_affiche) ?></strong></p>
+        <?= language_switcher() ?>
+        <h1><?= translate('share_file') ?></h1>
+        <p><?= translate('file') ?> : <strong><?= htmlspecialchars($nom_affiche) ?></strong></p>
 
         <?php if ($error): ?>
             <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
@@ -130,18 +131,18 @@ $partages = $stmt->fetchAll();
             <?= csrf_field() ?>
             <input type="hidden" name="id_fichier" value="<?= $id_fichier ?>">
             <div class="form-group">
-                <label for="destinataire">Nom d'utilisateur du destinataire</label>
+                <label for="destinataire"><?= translate('recipient_username') ?></label>
                 <input type="text" id="destinataire" name="destinataire" required
                        placeholder="Ex: alice">
             </div>
-            <button type="submit" class="btn">Partager</button>
+            <button type="submit" class="btn"><?= translate('share') ?></button>
         </form>
 
         <?php if (!empty($partages)): ?>
-            <h2>Déjà partagé avec</h2>
+            <h2><?= translate('already_shared_with') ?></h2>
             <table class="table">
                 <thead>
-                    <tr><th>Utilisateur</th><th>Date</th></tr>
+                    <tr><th><?= translate('user') ?></th><th><?= translate('date') ?></th></tr>
                 </thead>
                 <tbody>
                     <?php foreach ($partages as $p): ?>
@@ -154,7 +155,7 @@ $partages = $stmt->fetchAll();
             </table>
         <?php endif; ?>
 
-        <p class="link"><a href="dashboard.php">Retour</a></p>
+        <p class="link"><a href="dashboard.php"><?= translate('back') ?></a></p>
     </div>
 </body>
 </html>

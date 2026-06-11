@@ -58,29 +58,30 @@ foreach ($fichiers_partages_bruts as $f) {
 
 // Formater la taille
 function format_taille(int $octets): string {
-    if ($octets < 1024) return $octets . ' o';
-    if ($octets < 1024 * 1024) return round($octets / 1024, 1) . ' Ko';
-    return round($octets / (1024 * 1024), 1) . ' Mo';
+    if ($octets < 1024) return $octets . (current_language() === 'en' ? ' B' : ' o');
+    if ($octets < 1024 * 1024) return round($octets / 1024, 1) . (current_language() === 'en' ? ' KB' : ' Ko');
+    return round($octets / (1024 * 1024), 1) . (current_language() === 'en' ? ' MB' : ' Mo');
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= current_language() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes fichiers - Stockage Sécurisé</title>
+    <title><?= translate('my_files') ?> - <?= translate('app_name') ?></title>
     <link rel="stylesheet" href="public/css/style.css">
 </head>
 <body>
     <div class="container container-wide">
+        <?= language_switcher() ?>
         <div class="header">
-            <h1>Mes fichiers</h1>
+            <h1><?= translate('my_files') ?></h1>
             <div class="header-right">
-                <span>Bonjour, <?= htmlspecialchars($_SESSION['username']) ?></span>
-                <a href="delete_account.php" class="btn btn-small btn-danger">Supprimer compte</a>
+                <span><?= translate('hello') ?>, <?= htmlspecialchars($_SESSION['username']) ?></span>
+                <a href="delete_account.php" class="btn btn-small btn-danger"><?= translate('delete_account') ?></a>
                 <form method="POST" action="logout.php" class="action-form">
                     <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-small">Déconnexion</button>
+                    <button type="submit" class="btn btn-small"><?= translate('logout') ?></button>
                 </form>
             </div>
         </div>
@@ -94,30 +95,30 @@ function format_taille(int $octets): string {
 
         <!-- Upload -->
         <div class="section">
-            <h2>Envoyer un fichier</h2>
+            <h2><?= translate('upload_file') ?></h2>
             <form method="POST" action="upload.php" enctype="multipart/form-data">
                 <?= csrf_field() ?>
                 <div class="form-group form-inline">
                     <input type="file" name="fichier" required>
-                    <button type="submit" class="btn">Envoyer</button>
+                    <button type="submit" class="btn"><?= translate('upload') ?></button>
                 </div>
             </form>
         </div>
 
         <!-- Mes fichiers -->
         <div class="section">
-            <h2>Mes fichiers (<?= count($mes_fichiers) ?>)</h2>
+            <h2><?= translate('my_files') ?> (<?= count($mes_fichiers) ?>)</h2>
             <?php if (empty($mes_fichiers)): ?>
-                <p>Aucun fichier pour le moment.</p>
+                <p><?= translate('no_files') ?></p>
             <?php else: ?>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Nom</th>
-                            <th>Taille</th>
-                            <th>Type</th>
-                            <th>Date</th>
-                            <th>Actions</th>
+                            <th><?= translate('name') ?></th>
+                            <th><?= translate('size') ?></th>
+                            <th><?= translate('type') ?></th>
+                            <th><?= translate('date') ?></th>
+                            <th><?= translate('actions') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -128,13 +129,13 @@ function format_taille(int $octets): string {
                                 <td><?= htmlspecialchars($f['mime_dechiffre'] ?? '-') ?></td>
                                 <td><?= htmlspecialchars($f['date_upload']) ?></td>
                                 <td class="actions">
-                                    <a href="download.php?id=<?= $f['id_fichier'] ?>" class="btn btn-small">Télécharger</a>
-                                    <a href="share.php?id=<?= $f['id_fichier'] ?>" class="btn btn-small">Partager</a>
+                                    <a href="download.php?id=<?= $f['id_fichier'] ?>" class="btn btn-small"><?= translate('download') ?></a>
+                                    <a href="share.php?id=<?= $f['id_fichier'] ?>" class="btn btn-small"><?= translate('share') ?></a>
                                     <form method="POST" action="delete_file.php" class="action-form"
-                                          onsubmit="return confirm('Supprimer ce fichier ?')">
+                                          onsubmit="return confirm('<?= htmlspecialchars(translate('confirm_delete_file'), ENT_QUOTES, 'UTF-8') ?>')">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="id_fichier" value="<?= $f['id_fichier'] ?>">
-                                        <button type="submit" class="btn btn-small btn-danger">Supprimer</button>
+                                        <button type="submit" class="btn btn-small btn-danger"><?= translate('delete') ?></button>
                                     </form>
                                 </td>
                             </tr>
@@ -146,18 +147,18 @@ function format_taille(int $octets): string {
 
         <!-- Fichiers partagés avec moi -->
         <div class="section">
-            <h2>Fichiers partagés avec moi (<?= count($fichiers_partages) ?>)</h2>
+            <h2><?= translate('shared_with_me') ?> (<?= count($fichiers_partages) ?>)</h2>
             <?php if (empty($fichiers_partages)): ?>
-                <p>Aucun fichier partagé avec vous.</p>
+                <p><?= translate('no_shared_files') ?></p>
             <?php else: ?>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Nom</th>
-                            <th>Taille</th>
-                            <th>Propriétaire</th>
-                            <th>Date</th>
-                            <th>Actions</th>
+                            <th><?= translate('name') ?></th>
+                            <th><?= translate('size') ?></th>
+                            <th><?= translate('owner') ?></th>
+                            <th><?= translate('date') ?></th>
+                            <th><?= translate('actions') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -168,7 +169,7 @@ function format_taille(int $octets): string {
                                 <td><?= htmlspecialchars($f['proprietaire']) ?></td>
                                 <td><?= htmlspecialchars($f['date_upload']) ?></td>
                                 <td>
-                                    <a href="download.php?id=<?= $f['id_fichier'] ?>" class="btn btn-small">Télécharger</a>
+                                    <a href="download.php?id=<?= $f['id_fichier'] ?>" class="btn btn-small"><?= translate('download') ?></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -178,9 +179,9 @@ function format_taille(int $octets): string {
         </div>
 
         <p class="legal-links">
-            <a href="privacy.php">Confidentialité</a>
+            <a href="privacy.php"><?= translate('privacy') ?></a>
             <span aria-hidden="true">·</span>
-            <a href="terms.php">Conditions d'utilisation</a>
+            <a href="terms.php"><?= translate('terms') ?></a>
         </p>
     </div>
 </body>

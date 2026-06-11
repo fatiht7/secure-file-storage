@@ -9,7 +9,7 @@ $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    exit('Méthode non autorisée.');
+    exit(translate('method_not_allowed'));
 }
 
 require_valid_csrf_token();
@@ -18,9 +18,9 @@ if (isset($_FILES['fichier'])) {
     $fichier = $_FILES['fichier'];
 
     if ($fichier['error'] !== UPLOAD_ERR_OK) {
-        $error = 'Erreur lors de l\'upload du fichier.';
+        $error = translate('upload_error');
     } elseif ($fichier['size'] > 10 * 1024 * 1024) { // 10 Mo max
-        $error = 'Le fichier ne doit pas dépasser 10 Mo.';
+        $error = translate('file_too_large');
     } else {
         $chemin = null;
 
@@ -92,7 +92,7 @@ if (isset($_FILES['fichier'])) {
             ]);
 
             $pdo->commit();
-            $success = 'Fichier uploadé et chiffré avec succès !';
+            $success = translate('upload_success');
 
         } catch (Throwable $e) {
             if ($pdo->inTransaction()) {
@@ -104,11 +104,11 @@ if (isset($_FILES['fichier'])) {
             }
 
             error_log($e->getMessage());
-            $error = 'L\'upload a échoué. Aucun fichier n\'a été conservé.';
+            $error = translate('upload_failed');
         }
     }
 } else {
-    $error = 'Aucun fichier reçu.';
+    $error = translate('no_file_received');
 }
 
 // Rediriger vers le dashboard avec le message

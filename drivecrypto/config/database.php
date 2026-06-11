@@ -40,5 +40,7 @@ try {
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     error_log($e->getMessage());
-    die('Erreur de connexion à la base de données.');
+    die(current_language() === 'en'
+        ? 'Unable to connect to the database.'
+        : 'Erreur de connexion à la base de données.');
 }

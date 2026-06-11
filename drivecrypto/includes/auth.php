@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/i18n.php';
 
 function csrf_token(): string
 {
@@ -29,7 +30,7 @@ function require_valid_csrf_token(): void
         || !hash_equals($session_token, $submitted_token)
     ) {
         http_response_code(403);
-        exit('Requête refusée : jeton de sécurité invalide.');
+        exit(translate('invalid_csrf'));
     }
 }
 

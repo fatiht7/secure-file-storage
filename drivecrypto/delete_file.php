@@ -5,7 +5,7 @@ require_auth();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    exit('Méthode non autorisée.');
+    exit(translate('method_not_allowed'));
 }
 
 require_valid_csrf_token();
@@ -18,7 +18,7 @@ $stmt->execute(['fid' => $id_fichier, 'uid' => $_SESSION['user_id']]);
 $fichier = $stmt->fetch();
 
 if (!$fichier) {
-    $_SESSION['flash_error'] = 'Fichier introuvable ou accès refusé.';
+    $_SESSION['flash_error'] = translate('file_not_found');
     header('Location: dashboard.php');
     exit;
 }
@@ -33,6 +33,6 @@ if (file_exists($chemin)) {
 $stmt = $pdo->prepare('DELETE FROM fichiers WHERE id_fichier = :fid');
 $stmt->execute(['fid' => $id_fichier]);
 
-$_SESSION['flash_success'] = 'Fichier supprimé.';
+$_SESSION['flash_success'] = translate('file_deleted');
 header('Location: dashboard.php');
 exit;

@@ -22,22 +22,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validations
     if (empty($username) || empty($email) || empty($mdp)) {
-        $error = 'Tous les champs sont obligatoires.';
+        $error = translate('all_fields_required');
     } elseif (!$terms_accepted) {
-        $error = 'Vous devez accepter les conditions d\'utilisation.';
+        $error = translate('terms_required');
     } elseif (strlen($mdp) < 8) {
-        $error = 'Le mot de passe doit contenir au moins 8 caractères.';
+        $error = translate('password_too_short');
     } elseif ($mdp !== $confirm) {
-        $error = 'Les mots de passe ne correspondent pas.';
+        $error = translate('password_mismatch');
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Adresse email invalide.';
+        $error = translate('invalid_email');
     } else {
         // Vérifier unicité username/email
         $stmt = $pdo->prepare('SELECT id_utilisateur FROM utilisateurs WHERE username = :u OR email = :e');
         $stmt->execute(['u' => $username, 'e' => $email]);
 
         if ($stmt->fetch()) {
-            $error = 'Ce nom d\'utilisateur ou email est déjà utilisé.';
+            $error = translate('account_exists');
         } else {
             try {
                 // 1. Hacher le mot de passe (Argon2id)
@@ -73,23 +73,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
 
             } catch (Exception $e) {
-                $error = 'Erreur : ' . $e->getMessage();
+                $error = translate('generic_error', $e->getMessage());
             }
         }
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= current_language() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription - Stockage Sécurisé</title>
+    <title><?= translate('register') ?> - <?= translate('app_name') ?></title>
     <link rel="stylesheet" href="public/css/style.css">
 </head>
 <body class="auth-page">
     <div class="container">
-        <h1>Créer un compte</h1>
+        <?= language_switcher() ?>
+        <h1><?= translate('register') ?></h1>
 
         <?php if ($error): ?>
             <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
@@ -98,24 +99,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="POST" action="register.php">
             <?= csrf_field() ?>
             <div class="form-group">
-                <label for="username">Nom d'utilisateur</label>
+                <label for="username"><?= translate('username') ?></label>
                 <input type="text" id="username" name="username" required
                        value="<?= htmlspecialchars($username ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email"><?= translate('email') ?></label>
                 <input type="email" id="email" name="email" required
                        value="<?= htmlspecialchars($email ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label for="mot_de_passe">Mot de passe (min. 8 caractères)</label>
+                <label for="mot_de_passe"><?= translate('password_min') ?></label>
                 <input type="password" id="mot_de_passe" name="mot_de_passe" required minlength="8">
             </div>
 
             <div class="form-group">
-                <label for="mot_de_passe_confirmation">Confirmer le mot de passe</label>
+                <label for="mot_de_passe_confirmation"><?= translate('confirm_password') ?></label>
                 <input type="password" id="mot_de_passe_confirmation" name="mot_de_passe_confirmation" required>
             </div>
 
@@ -123,23 +124,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="checkbox" id="terms_accepted" name="terms_accepted" value="1" required
                        <?= !empty($terms_accepted) ? 'checked' : '' ?>>
                 <label for="terms_accepted">
-                    J'accepte les <a href="terms.php" target="_blank" rel="noopener">conditions d'utilisation</a>
-                    et j'ai lu la <a href="privacy.php" target="_blank" rel="noopener">politique de confidentialité</a>.
+                    <?= translate('accept_terms_prefix') ?>
+                    <a href="terms.php" target="_blank" rel="noopener"><?= translate('terms') ?></a>
+                    <?= translate('and_read') ?>
+                    <a href="privacy.php" target="_blank" rel="noopener"><?= translate('privacy_policy') ?></a>.
                 </label>
             </div>
 
             <p class="form-notice">
-                Prototype étudiant : n'envoyez aucune donnée sensible ou confidentielle.
+                <?= translate('student_warning') ?>
             </p>
 
-            <button type="submit" class="btn">S'inscrire</button>
+            <button type="submit" class="btn"><?= translate('sign_up') ?></button>
         </form>
 
-        <p class="link">Déjà un compte ? <a href="login.php">Se connecter</a></p>
+        <p class="link"><?= translate('already_account') ?> <a href="login.php"><?= translate('sign_in') ?></a></p>
         <p class="legal-links">
-            <a href="privacy.php">Confidentialité</a>
+            <a href="privacy.php"><?= translate('privacy') ?></a>
             <span aria-hidden="true">·</span>
-            <a href="terms.php">Conditions d'utilisation</a>
+            <a href="terms.php"><?= translate('terms') ?></a>
         </p>
     </div>
 </body>
