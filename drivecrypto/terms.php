@@ -144,7 +144,7 @@ $english = current_language() === 'en';
             </section>
         <?php endif; ?>
 
-        <p class="link"><a href="register.php"><?= translate('return_register') ?></a></p>
+        <p class="link"><a href="register.php"><?= translate('back') ?></a></p>
     </main>
 </body>
 </html>

@@ -38,6 +38,9 @@ try {
     // 4. Déchiffrer le nom original et le type MIME
     $nom_original = dechiffrer_texte_aes($fichier['nom_original_chiffre'], $cle_aes);
     $type_mime = dechiffrer_texte_aes($fichier['type_mime_chiffre'], $cle_aes);
+    if (!preg_match('#^[a-z0-9][a-z0-9.+-]*/[a-z0-9][a-z0-9.+-]*$#i', $type_mime)) {
+        $type_mime = 'application/octet-stream';
+    }
 
     // 5. Lire et déchiffrer le fichier
     $chemin = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $fichier['nom_stockage'];
@@ -49,9 +52,25 @@ try {
         die(translate('integrity_error'));
     }
 
+    $nom_telechargement = preg_replace('/[\x00-\x1F\x7F"\\\\\/]+/u', '_', $nom_original);
+    if (!is_string($nom_telechargement)) {
+        $nom_telechargement = 'download';
+    }
+    $nom_telechargement = trim($nom_telechargement, " .");
+    if ($nom_telechargement === '') {
+        $nom_telechargement = 'download';
+    }
+
+    $nom_ascii = preg_replace('/[^\x20-\x7E]/', '_', $nom_telechargement);
+    $nom_ascii = str_replace(['"', '\\'], '_', $nom_ascii);
+    $nom_utf8 = rawurlencode($nom_telechargement);
+
     // 7. Envoyer le fichier au navigateur
     header('Content-Type: ' . $type_mime);
-    header('Content-Disposition: attachment; filename="' . $nom_original . '"');
+    header(
+        'Content-Disposition: attachment; filename="' . $nom_ascii
+        . '"; filename*=UTF-8\'\'' . $nom_utf8
+    );
     header('Content-Length: ' . strlen($contenu));
     echo $contenu;
     exit;

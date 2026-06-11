@@ -24,7 +24,7 @@ The repository contains:
 ## Requirements
 
 - PHP 8.1 or later;
-- PHP extensions: `openssl`, `pdo`, and `pdo_pgsql`;
+- PHP extensions: `openssl`, `pdo`, `pdo_pgsql`, and `fileinfo`;
 - PostgreSQL 14 or later.
 
 ## Installation

@@ -91,10 +91,11 @@ $translations = [
         'upload_success' => 'Fichier uploadé et chiffré avec succès !',
         'upload_failed' => 'L\'upload a échoué. Aucun fichier n\'a été conservé.',
         'no_file_received' => 'Aucun fichier reçu.',
+        'file_read_error' => 'Impossible de lire le fichier envoyé.',
+        'mime_detection_error' => 'Impossible de détecter le type du fichier.',
         'integrity_error' => 'Erreur d\'intégrité : le fichier a été modifié !',
         'decryption_error' => 'Erreur de déchiffrement : %s',
         'generic_error' => 'Erreur : %s',
-        'return_register' => 'Retour à l\'inscription',
     ],
     'en' => [
         'app_name' => 'Secure File Storage',
@@ -175,10 +176,11 @@ $translations = [
         'upload_success' => 'File uploaded and encrypted successfully!',
         'upload_failed' => 'The upload failed. No file was retained.',
         'no_file_received' => 'No file received.',
+        'file_read_error' => 'Unable to read the uploaded file.',
+        'mime_detection_error' => 'Unable to detect the file type.',
         'integrity_error' => 'Integrity error: the file has been modified!',
         'decryption_error' => 'Decryption error: %s',
         'generic_error' => 'Error: %s',
-        'return_register' => 'Back to registration',
     ],
 ];
 

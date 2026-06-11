@@ -33,7 +33,13 @@ if (isset($_FILES['fichier'])) {
             // 1. Lire le contenu du fichier
             $contenu = file_get_contents($fichier['tmp_name']);
             if ($contenu === false) {
-                throw new RuntimeException('Impossible de lire le fichier envoyé.');
+                throw new RuntimeException(translate('file_read_error'));
+            }
+
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $type_mime = $finfo->file($fichier['tmp_name']);
+            if ($type_mime === false) {
+                throw new RuntimeException(translate('mime_detection_error'));
             }
 
             // 2. Générer une clé AES aléatoire pour ce fichier
@@ -44,7 +50,7 @@ if (isset($_FILES['fichier'])) {
 
             // 4. Chiffrer le nom original et le type MIME (jamais en clair en base)
             $nom_chiffre = chiffrer_texte_aes($fichier['name'], $cle_aes);
-            $mime_chiffre = chiffrer_texte_aes($fichier['type'], $cle_aes);
+            $mime_chiffre = chiffrer_texte_aes($type_mime, $cle_aes);
 
             // 5. Nom de stockage aléatoire (pour ne pas révéler le nom original)
             $nom_stockage = bin2hex(random_bytes(32));
