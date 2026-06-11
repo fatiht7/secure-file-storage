@@ -157,6 +157,39 @@ form {
     cursor: pointer;
 }
 
+.password-field {
+    position: relative;
+}
+
+.password-field input {
+    padding-right: 88px !important;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    padding: 6px 9px;
+    color: var(--primary-dark);
+    background: var(--primary-soft);
+    border: 0;
+    border-radius: 7px;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+.password-toggle:hover {
+    background: #d4ebee;
+}
+
+.password-toggle:focus-visible {
+    outline: 3px solid rgba(20, 108, 126, 0.25);
+    outline-offset: 2px;
+}
+
 .checkbox-group {
     display: flex;
     align-items: flex-start;
@@ -441,7 +474,7 @@ form > .btn {
 }
 
 .container-wide .table {
-    min-width: 720px;
+    min-width: 900px;
 }
 
 .table th,
@@ -476,6 +509,16 @@ form > .btn {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+}
+
+.user-badge {
+    display: inline-flex;
+    padding: 5px 9px;
+    color: var(--primary-dark);
+    background: var(--primary-soft);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
 }
 
 @media (max-width: 760px) {

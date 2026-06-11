@@ -38,7 +38,7 @@ foreach ($mes_fichiers_bruts as $f) {
 // Fichiers partagés avec moi
 $stmt = $pdo->prepare('
     SELECT f.id_fichier, f.nom_original_chiffre, f.taille, f.type_mime_chiffre, f.date_upload,
-           u.username AS proprietaire, p.cle_aes_chiffree
+           u.username AS proprietaire, p.cle_aes_chiffree, p.date_partage
     FROM partager p
     JOIN fichiers f ON f.id_fichier = p.id_fichier
     JOIN utilisateurs u ON u.id_utilisateur = f.id_utilisateur
@@ -127,7 +127,7 @@ function format_taille(int $octets): string {
                                 <td><?= htmlspecialchars($f['nom_dechiffre']) ?></td>
                                 <td><?= format_taille($f['taille']) ?></td>
                                 <td><?= htmlspecialchars($f['mime_dechiffre'] ?? '-') ?></td>
-                                <td><?= htmlspecialchars($f['date_upload']) ?></td>
+                                <td><?= htmlspecialchars(format_datetime($f['date_upload'])) ?></td>
                                 <td class="actions">
                                     <a href="download.php?id=<?= $f['id_fichier'] ?>" class="btn btn-small"><?= translate('download') ?></a>
                                     <a href="share.php?id=<?= $f['id_fichier'] ?>" class="btn btn-small"><?= translate('share') ?></a>
@@ -156,8 +156,8 @@ function format_taille(int $octets): string {
                         <tr>
                             <th><?= translate('name') ?></th>
                             <th><?= translate('size') ?></th>
-                            <th><?= translate('owner') ?></th>
-                            <th><?= translate('date') ?></th>
+                            <th><?= translate('shared_by') ?></th>
+                            <th><?= translate('shared_on') ?></th>
                             <th><?= translate('actions') ?></th>
                         </tr>
                     </thead>
@@ -166,8 +166,8 @@ function format_taille(int $octets): string {
                             <tr>
                                 <td><?= htmlspecialchars($f['nom_dechiffre']) ?></td>
                                 <td><?= format_taille($f['taille']) ?></td>
-                                <td><?= htmlspecialchars($f['proprietaire']) ?></td>
-                                <td><?= htmlspecialchars($f['date_upload']) ?></td>
+                                <td><span class="user-badge"><?= htmlspecialchars($f['proprietaire']) ?></span></td>
+                                <td><?= htmlspecialchars(format_datetime($f['date_partage'])) ?></td>
                                 <td>
                                     <a href="download.php?id=<?= $f['id_fichier'] ?>" class="btn btn-small"><?= translate('download') ?></a>
                                 </td>

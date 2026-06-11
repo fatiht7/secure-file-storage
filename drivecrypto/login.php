@@ -64,7 +64,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="mot_de_passe"><?= translate('password') ?></label>
-                <input type="password" id="mot_de_passe" name="mot_de_passe" required>
+                <div class="password-field">
+                    <input type="password" id="mot_de_passe" name="mot_de_passe" required>
+                    <button type="button" class="password-toggle"
+                            data-password-toggle="mot_de_passe"
+                            data-show-label="<?= htmlspecialchars(translate('show_password'), ENT_QUOTES, 'UTF-8') ?>"
+                            data-hide-label="<?= htmlspecialchars(translate('hide_password'), ENT_QUOTES, 'UTF-8') ?>"
+                            aria-pressed="false">
+                        <?= translate('show_password') ?>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" class="btn"><?= translate('sign_in') ?></button>
@@ -77,5 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="terms.php"><?= translate('terms') ?></a>
         </p>
     </div>
+    <script src="public/js/app.js"></script>
 </body>
 </html>

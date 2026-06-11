@@ -23,6 +23,8 @@ $translations = [
         'password' => 'Mot de passe',
         'password_min' => 'Mot de passe (min. 8 caractères)',
         'confirm_password' => 'Confirmer le mot de passe',
+        'show_password' => 'Afficher',
+        'hide_password' => 'Masquer',
         'no_account' => 'Pas de compte ?',
         'already_account' => 'Déjà un compte ?',
         'all_fields_required' => 'Tous les champs sont obligatoires.',
@@ -56,12 +58,17 @@ $translations = [
         'confirm_delete_file' => 'Supprimer ce fichier ?',
         'shared_with_me' => 'Fichiers partagés avec moi',
         'no_shared_files' => 'Aucun fichier partagé avec vous.',
-        'owner' => 'Propriétaire',
+        'shared_by' => 'Partagé par',
+        'shared_on' => 'Partagé le',
         'share_file' => 'Partager un fichier',
         'file' => 'Fichier',
         'recipient_username' => 'Nom d\'utilisateur du destinataire',
         'already_shared_with' => 'Déjà partagé avec',
         'user' => 'Utilisateur',
+        'revoke_access' => 'Retirer l\'accès',
+        'confirm_revoke_access' => 'Retirer l\'accès à ce fichier pour cet utilisateur ?',
+        'share_revoked' => 'Accès retiré pour %s.',
+        'share_not_found' => 'Partage introuvable.',
         'back' => 'Retour',
         'delete_my_account' => 'Supprimer mon compte',
         'delete_warning' => 'Cette action est irréversible. Tous vos fichiers seront supprimés.',
@@ -100,6 +107,8 @@ $translations = [
         'password' => 'Password',
         'password_min' => 'Password (8 characters minimum)',
         'confirm_password' => 'Confirm password',
+        'show_password' => 'Show',
+        'hide_password' => 'Hide',
         'no_account' => 'No account yet?',
         'already_account' => 'Already have an account?',
         'all_fields_required' => 'All fields are required.',
@@ -133,12 +142,17 @@ $translations = [
         'confirm_delete_file' => 'Delete this file?',
         'shared_with_me' => 'Files shared with me',
         'no_shared_files' => 'No files have been shared with you.',
-        'owner' => 'Owner',
+        'shared_by' => 'Shared by',
+        'shared_on' => 'Shared on',
         'share_file' => 'Share a file',
         'file' => 'File',
         'recipient_username' => 'Recipient username',
         'already_shared_with' => 'Already shared with',
         'user' => 'User',
+        'revoke_access' => 'Remove access',
+        'confirm_revoke_access' => 'Remove this user\'s access to the file?',
+        'share_revoked' => 'Access removed for %s.',
+        'share_not_found' => 'Share not found.',
         'back' => 'Back',
         'delete_my_account' => 'Delete my account',
         'delete_warning' => 'This action cannot be undone. All your files will be deleted.',
@@ -196,4 +210,13 @@ function language_switcher(): string
     }
 
     return '<nav class="language-switcher" aria-label="Language">' . implode('', $links) . '</nav>';
+}
+
+function format_datetime(string $date): string
+{
+    $date_time = new DateTimeImmutable($date);
+
+    return current_language() === 'en'
+        ? $date_time->format('M j, Y \a\t H:i')
+        : $date_time->format('d/m/Y à H:i');
 }

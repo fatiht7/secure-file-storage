@@ -112,12 +112,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="mot_de_passe"><?= translate('password_min') ?></label>
-                <input type="password" id="mot_de_passe" name="mot_de_passe" required minlength="8">
+                <div class="password-field">
+                    <input type="password" id="mot_de_passe" name="mot_de_passe" required minlength="8">
+                    <button type="button" class="password-toggle"
+                            data-password-toggle="mot_de_passe"
+                            data-show-label="<?= htmlspecialchars(translate('show_password'), ENT_QUOTES, 'UTF-8') ?>"
+                            data-hide-label="<?= htmlspecialchars(translate('hide_password'), ENT_QUOTES, 'UTF-8') ?>"
+                            aria-pressed="false">
+                        <?= translate('show_password') ?>
+                    </button>
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="mot_de_passe_confirmation"><?= translate('confirm_password') ?></label>
-                <input type="password" id="mot_de_passe_confirmation" name="mot_de_passe_confirmation" required>
+                <div class="password-field">
+                    <input type="password" id="mot_de_passe_confirmation" name="mot_de_passe_confirmation" required>
+                    <button type="button" class="password-toggle"
+                            data-password-toggle="mot_de_passe_confirmation"
+                            data-show-label="<?= htmlspecialchars(translate('show_password'), ENT_QUOTES, 'UTF-8') ?>"
+                            data-hide-label="<?= htmlspecialchars(translate('hide_password'), ENT_QUOTES, 'UTF-8') ?>"
+                            aria-pressed="false">
+                        <?= translate('show_password') ?>
+                    </button>
+                </div>
             </div>
 
             <div class="checkbox-group">
@@ -145,5 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="terms.php"><?= translate('terms') ?></a>
         </p>
     </div>
+    <script src="public/js/app.js"></script>
 </body>
 </html>
