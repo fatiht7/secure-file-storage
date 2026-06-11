@@ -1,17 +1,16 @@
-# Application Secure File Storage
+# Secure File Storage Application
 
-Ce dossier contient l'application web PHP de Secure File Storage.
+This directory contains the PHP web application.
 
-La documentation d'installation, les prérequis et les avertissements de
-sécurité sont disponibles dans le [`README.md`](../README.md) à la racine du
-dépôt.
+Installation instructions, requirements, and security warnings are available
+in the main [`README.md`](../README.md) at the root of the repository.
 
-Pour lancer l'application :
+To start the application:
 
 ```powershell
 Set-Location drivecrypto
 php -S localhost:8080
 ```
 
-Le schéma de base de données se trouve dans
+The database schema is available in
 [`../Scriptbdd/bdd.sql`](../Scriptbdd/bdd.sql).

@@ -1,23 +1,22 @@
-# Politique de sécurité
+# Security Policy
 
-## Statut du projet
+## Project Status
 
-Secure File Storage est un prototype pédagogique. Il n'a pas fait l'objet d'un audit de
-sécurité indépendant et ne doit pas être déployé tel quel en production.
+Secure File Storage is an educational prototype. It has not undergone an
+independent security audit and should not be deployed to production as-is.
 
-En particulier, l'application conserve temporairement le mot de passe en clair
-dans la session PHP afin de déverrouiller la clé privée de l'utilisateur. Cette
-architecture doit être revue avant tout usage réel.
+The application temporarily stores the user's plain-text password in the PHP
+session to unlock their private key. This architecture should be redesigned
+before any real-world use.
 
-## Signaler une vulnérabilité
+## Reporting a Vulnerability
 
-Ne publiez pas de vulnérabilité exploitable dans une issue publique. Contactez
-le propriétaire du dépôt en privé en indiquant :
+Do not publish exploitable vulnerabilities in a public issue. Contact the
+repository owner privately and include:
 
-- la partie concernée ;
-- les étapes de reproduction ;
-- l'impact estimé ;
-- une proposition de correction, si disponible.
+- the affected component;
+- reproduction steps;
+- the estimated impact;
+- a proposed fix, when available.
 
-Évitez d'inclure des données personnelles, des mots de passe ou des clés privées
-dans le signalement.
+Do not include personal data, passwords, or private keys in the report.

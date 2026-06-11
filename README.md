@@ -1,77 +1,78 @@
 # Secure File Storage
 
-Secure File Storage est un prototype pédagogique de stockage et de partage de fichiers
-chiffrés, développé en PHP avec PostgreSQL.
+Secure File Storage is an educational prototype for encrypted file storage and
+sharing, built with PHP and PostgreSQL.
 
-Le dépôt contient :
+The repository contains:
 
-- l'application web dans [`drivecrypto/`](drivecrypto/) ;
-- le schéma PostgreSQL dans [`Scriptbdd/bdd.sql`](Scriptbdd/bdd.sql) ;
-- le rapport final au format PDF, avec les modèles et diagrammes.
+- the web application in [`drivecrypto/`](drivecrypto/);
+- the PostgreSQL schema in [`Scriptbdd/bdd.sql`](Scriptbdd/bdd.sql);
+- the final report in PDF format, including the data models and diagrams.
 
-## Fonctionnalités
+## Features
 
-- création de compte et authentification ;
-- chiffrement des fichiers avec AES-256-GCM ;
-- protection des clés de fichiers par RSA ;
-- partage d'un fichier avec un autre utilisateur ;
-- contrôle d'intégrité SHA-256 ;
-- suppression des fichiers et des comptes.
+- account creation and authentication;
+- AES-256-GCM file encryption;
+- RSA protection of file encryption keys;
+- file sharing with another user;
+- SHA-256 integrity verification;
+- file and account deletion;
+- CSRF protection for forms;
+- transactional uploads with rollback on failure.
 
-## Prérequis
+## Requirements
 
-- PHP 8.1 ou supérieur ;
-- extensions PHP `openssl`, `pdo` et `pdo_pgsql` ;
-- PostgreSQL 14 ou supérieur.
+- PHP 8.1 or later;
+- PHP extensions: `openssl`, `pdo`, and `pdo_pgsql`;
+- PostgreSQL 14 or later.
 
 ## Installation
 
-1. Créer une base PostgreSQL vide.
-2. Exécuter le script [`Scriptbdd/bdd.sql`](Scriptbdd/bdd.sql).
-3. Copier `.env.example` vers `.env` et adapter les valeurs.
-4. Exporter les variables du fichier `.env` dans l'environnement du serveur PHP.
-5. Démarrer l'application depuis le dossier `drivecrypto`.
+1. Create an empty PostgreSQL database.
+2. Run [`Scriptbdd/bdd.sql`](Scriptbdd/bdd.sql).
+3. Copy `.env.example` to `.env` and update the values.
+4. Export the variables from `.env` to the PHP server environment.
+5. Start the application from the `drivecrypto` directory.
 
-Exemple avec PowerShell :
+PowerShell example:
 
 ```powershell
 $env:DB_HOST = "localhost"
 $env:DB_PORT = "5432"
 $env:DB_NAME = "drivecrypto"
 $env:DB_USER = "postgres"
-$env:DB_PASSWORD = "changez-moi"
+$env:DB_PASSWORD = "change-me"
 
 Set-Location drivecrypto
 php -S localhost:8080
 ```
 
-L'application est ensuite accessible sur
+The application is then available at
 [http://localhost:8080](http://localhost:8080).
 
-Le dossier `drivecrypto/uploads/` est créé dans le dépôt, mais son contenu est
-ignoré par Git.
+The `drivecrypto/uploads/` directory is included in the repository, but its
+contents are ignored by Git.
 
-## Architecture cryptographique
+## Cryptographic Architecture
 
-Chaque fichier reçoit une clé AES aléatoire. Cette clé est chiffrée avec la clé
-publique RSA de chaque utilisateur autorisé. Les noms et types MIME sont
-également chiffrés.
+Each file receives a randomly generated AES key. This key is encrypted with the
+RSA public key of every authorized user. File names and MIME types are also
+encrypted.
 
-Ce projet effectue le chiffrement côté serveur. Il ne doit donc pas être décrit
-comme un chiffrement de bout en bout au sens strict.
+Encryption is performed on the server. Therefore, the project should not be
+described as providing strict end-to-end encryption.
 
-## Sécurité
+## Security
 
-Ce dépôt est un prototype pédagogique et n'a pas fait l'objet d'un audit de
-sécurité indépendant. Ne l'utilisez pas en production ou pour stocker des
-données sensibles sans revue complémentaire. Consultez
-[`SECURITY.md`](SECURITY.md) pour plus de détails.
+This repository is an educational prototype and has not undergone an
+independent security audit. Do not use it in production or for sensitive data
+without an additional review. See [`SECURITY.md`](SECURITY.md) for details.
 
-## Vérifications
+## Automated Checks
 
-La vérification automatique GitHub Actions contrôle la syntaxe de tous les
-fichiers PHP à chaque contribution.
+GitHub Actions checks the syntax of every PHP file on each push and pull
+request.
 
-## Licence
+## License
 
-Aucune licence open source n'est actuellement accordée. Tous droits réservés.
+No open-source license is currently granted. All rights reserved.
