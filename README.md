@@ -1,14 +1,13 @@
-# DriveCrypto
+# Secure File Storage
 
-DriveCrypto est un prototype pédagogique de stockage et de partage de fichiers
+Secure File Storage est un prototype pédagogique de stockage et de partage de fichiers
 chiffrés, développé en PHP avec PostgreSQL.
 
 Le dépôt contient :
 
 - l'application web dans [`drivecrypto/`](drivecrypto/) ;
 - le schéma PostgreSQL dans [`Scriptbdd/bdd.sql`](Scriptbdd/bdd.sql) ;
-- les modèles de données et le diagramme de classes ;
-- le rapport final au format PDF.
+- le rapport final au format PDF, avec les modèles et diagrammes.
 
 ## Fonctionnalités
 

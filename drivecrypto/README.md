@@ -1,6 +1,6 @@
-# Application DriveCrypto
+# Application Secure File Storage
 
-Ce dossier contient l'application web PHP de DriveCrypto.
+Ce dossier contient l'application web PHP de Secure File Storage.
 
 La documentation d'installation, les prérequis et les avertissements de
 sécurité sont disponibles dans le [`README.md`](../README.md) à la racine du

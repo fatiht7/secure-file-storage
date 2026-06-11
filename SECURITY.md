@@ -2,7 +2,7 @@
 
 ## Statut du projet
 
-DriveCrypto est un prototype pédagogique. Il n'a pas fait l'objet d'un audit de
+Secure File Storage est un prototype pédagogique. Il n'a pas fait l'objet d'un audit de
 sécurité indépendant et ne doit pas être déployé tel quel en production.
 
 En particulier, l'application conserve temporairement le mot de passe en clair
